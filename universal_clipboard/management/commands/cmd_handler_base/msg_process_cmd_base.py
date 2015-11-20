@@ -8,6 +8,13 @@ __author__ = 'weijia'
 
 
 class MsgProcessCommandBase(BaseCommand):
+
+    def __init__(self):
+        super(MsgProcessCommandBase, self).__init__()
+        factory = MsgServiceFactory()
+        self.ufs_msg_service = factory.get_msg_service()
+        self.channel = None
+
     LOG_LEVELS = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG']
 
     help = 'Run tasks that are scheduled to run on the queue'
@@ -84,16 +91,18 @@ class MsgProcessCommandBase(BaseCommand):
         #     if not tasks.run_next_task():
         #         logging.debug('waiting for tasks')
         #         time.sleep(sleep)
-
-        self.init_msg_service()
         channel = self.register_to_service()
         while True:
             msg = channel.get_msg()
-            if self.service.is_exit(msg):
+            if self.ufs_msg_service.is_exit(msg):
                 break
             self.process_msg(msg)
         print "exiting handle function"
 
-    def init_msg_service(self):
-        factory = MsgServiceFactory()
-        self.service = factory.get_msg_service()
+    def register_to_service(self):
+        pass
+
+    def get_channel(self, channel_name):
+        if self.channel is None:
+            self.channel = self.ufs_msg_service.create_channel(channel_name)
+        return self.channel
