@@ -3,6 +3,7 @@ from optparse import make_option
 from django.core.management import BaseCommand
 import sys
 from iconizer.msg_service.msg_service_interface.msg_service_factory_interface import MsgServiceFactory
+import traceback
 
 __author__ = 'weijia'
 
@@ -96,7 +97,11 @@ class MsgProcessCommandBase(BaseCommand):
             msg = channel.get_msg()
             if self.ufs_msg_service.is_exit(msg):
                 break
-            self.process_msg(msg)
+            try:
+                self.process_msg(msg)
+            except Exception, e:
+                traceback.print_exc()
+                pass
         print "exiting handle function"
 
     def register_to_service(self):
