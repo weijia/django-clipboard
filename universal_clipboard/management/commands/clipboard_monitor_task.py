@@ -17,7 +17,9 @@ class ClipboardMsgHandler(MsgProcessCommandBase):
     # noinspection PyMethodMayBeStatic
     def process_msg(self, msg):
         clipboard_msg = {"msg_type": "clipboard", "data": msg}
-        UfsObj.objects.get_or_create(description_json=json.dumps(clipboard_msg["data"]), ufs_obj_type=3)
+        description_json = json.dumps(clipboard_msg["data"])
+        print description_json
+        UfsObj.objects.get_or_create(description_json=description_json, ufs_obj_type=3, source=3)
 
 
 Command = ClipboardMsgHandler
