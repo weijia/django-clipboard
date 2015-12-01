@@ -1,9 +1,12 @@
 import json
 
 # # from background_task.tasks import tasks, autodiscover
+from django.contrib.auth.models import User
+
 from cmd_handler_base.msg_process_cmd_base import MsgProcessCommandBase
+from django_local_apps.server_configurations import get_admin_username
 from iconizer.iconizer_consts import ICONIZER_SERVICE_NAME
-from obj_sys.models_ufs_obj import UfsObj
+from obj_sys.models_ufs_obj import UfsObj, Description
 
 
 class ClipboardMsgHandler(MsgProcessCommandBase):
@@ -17,9 +20,14 @@ class ClipboardMsgHandler(MsgProcessCommandBase):
     # noinspection PyMethodMayBeStatic
     def process_msg(self, msg):
         clipboard_msg = {"msg_type": "clipboard", "data": msg}
-        description_json = json.dumps(clipboard_msg["data"])
-        print description_json
-        UfsObj.objects.get_or_create(description_json=description_json, ufs_obj_type=3, source=3)
+        admin_username = get_admin_username()
+        admin_user = User.objects.get(username=admin_username)
+        description_content = unicode(msg["data"]["text"])
+        description, is_description_created=Description.objects.get_or_create(content=description_content)
+        obj, is_created = UfsObj.objects.get_or_create(description_json=json.dumps(clipboard_msg["data"]),
+                                                       ufs_obj_type=3, user=admin_user)
+        obj.descriptions.add(description)
+        # obj.save()
 
 
 Command = ClipboardMsgHandler

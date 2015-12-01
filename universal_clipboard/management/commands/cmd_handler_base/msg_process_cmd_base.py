@@ -92,6 +92,9 @@ class MsgProcessCommandBase(BaseCommand):
         #     if not tasks.run_next_task():
         #         logging.debug('waiting for tasks')
         #         time.sleep(sleep)
+        self.msg_loop()
+
+    def msg_loop(self):
         channel = self.register_to_service()
         while True:
             msg = channel.get_msg()
