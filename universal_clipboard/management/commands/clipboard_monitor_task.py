@@ -25,7 +25,8 @@ class ClipboardMsgHandler(MsgProcessCommandBase):
         description_content = unicode(msg["data"]["text"])
         description, is_description_created=Description.objects.get_or_create(content=description_content)
         obj, is_created = UfsObj.objects.get_or_create(description_json=json.dumps(clipboard_msg["data"]),
-                                                       ufs_obj_type=3, user=admin_user)
+                                                       ufs_obj_type=3, user=admin_user,
+                                                       ufs_url=u"clipboard://"+description_content)
         obj.descriptions.add(description)
         # obj.save()
 
