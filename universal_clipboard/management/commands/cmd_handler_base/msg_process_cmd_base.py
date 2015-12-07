@@ -1,7 +1,11 @@
 import logging
 from optparse import make_option
+
+from django.contrib.auth.models import User
 from django.core.management import BaseCommand
 import sys
+
+from django_local_apps.server_configurations import get_admin_username
 from iconizer.msg_service.msg_service_interface.msg_service_factory_interface import MsgServiceFactory
 import traceback
 
@@ -15,6 +19,8 @@ class MsgProcessCommandBase(BaseCommand):
         factory = MsgServiceFactory()
         self.ufs_msg_service = factory.get_msg_service()
         self.channel = None
+        admin_username = get_admin_username()
+        self.admin_user = User.objects.get(username=admin_username)
 
     LOG_LEVELS = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG']
 
