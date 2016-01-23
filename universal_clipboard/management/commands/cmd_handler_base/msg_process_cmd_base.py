@@ -119,7 +119,9 @@ class MsgProcessCommandBase(BaseCommand):
     def register_to_service(self):
         pass
 
-    def get_channel(self, channel_name):
+    def get_channel(self, channel_name=None):
         if self.channel is None:
+            if channel_name is None:
+                raise "Please provide a channel name for init"
             self.channel = self.ufs_msg_service.create_channel(channel_name)
         return self.channel
