@@ -23,7 +23,7 @@ class MsgProcessCommandBase(BaseCommand):
         self.ufs_msg_service = factory.get_msg_service()
         self.channel = None
         caller_file = get_inspection_frame(2)
-        app_signature = caller_file.replace("/", "_").replace("\\", "_")
+        app_signature = caller_file.replace("/", "_").replace("\\", "_").replace(":", "_")
         # Keep the instance, the lock file will be deleted whenever the instance is deleted
         self.me = SingleInstance(app_signature)
         admin_username = get_admin_username()
