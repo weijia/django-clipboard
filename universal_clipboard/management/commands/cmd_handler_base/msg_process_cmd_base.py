@@ -5,6 +5,9 @@ from django.contrib.auth.models import User
 from django.core.management import BaseCommand
 import sys
 
+from tendo.singleton import SingleInstance
+from ufs_tools.inspect_utils import get_inspection_frame
+
 from django_local_apps.server_configurations import get_admin_username
 from iconizer.msg_service.msg_service_interface.msg_service_factory_interface import MsgServiceFactory
 import traceback
@@ -19,6 +22,10 @@ class MsgProcessCommandBase(BaseCommand):
         factory = MsgServiceFactory()
         self.ufs_msg_service = factory.get_msg_service()
         self.channel = None
+        caller_file = get_inspection_frame(2)
+        app_signature = caller_file.replace("/", "_").replace("\\", "_")
+        # Keep the instance, the lock file will be deleted whenever the instance is deleted
+        self.me = SingleInstance(app_signature)
         admin_username = get_admin_username()
         self.admin_user = User.objects.get(username=admin_username)
 
